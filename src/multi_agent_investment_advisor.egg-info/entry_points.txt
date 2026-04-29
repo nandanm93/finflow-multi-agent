@@ -1,0 +1,3 @@
+[console_scripts]
+advisor = app.main:main
+advisor-web = app.api:run

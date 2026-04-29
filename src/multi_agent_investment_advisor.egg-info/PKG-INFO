@@ -1,0 +1,90 @@
+Metadata-Version: 2.4
+Name: multi-agent-investment-advisor
+Version: 0.1.0
+Summary: LangGraph-based multi-agent investment advisor
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: anthropic
+Requires-Dist: openai
+Requires-Dist: google-genai
+Requires-Dist: python-dotenv
+Requires-Dist: pydantic>=2.0
+Requires-Dist: pydantic-settings
+Requires-Dist: SQLAlchemy>=2.0
+Requires-Dist: alembic
+Requires-Dist: chromadb
+Requires-Dist: sentence-transformers
+Requires-Dist: numpy
+Requires-Dist: scipy
+Requires-Dist: rich
+Requires-Dist: pytest
+Requires-Dist: pytest-asyncio
+Requires-Dist: langgraph
+Requires-Dist: fastapi
+Requires-Dist: uvicorn[standard]
+Provides-Extra: dev
+Requires-Dist: ruff; extra == "dev"
+Requires-Dist: mypy; extra == "dev"
+Requires-Dist: pytest-cov; extra == "dev"
+
+# Multi-Agent Investment Advisor
+
+An iterative CLI system where three role-separated agents collaborate:
+
+- `ClientAgent`: simulated client profile and responses
+- `AdvisorAgent`: only role that talks to the client and delegates research
+- `AnalystAgent`: gathers evidence from web search + local knowledge store
+
+## Stack
+
+- Anthropic SDK
+- python-dotenv
+- pydantic
+- SQLAlchemy + Alembic
+- ChromaDB + sentence-transformers
+- numpy + scipy
+- rich
+- pytest + pytest-asyncio
+- LangGraph
+
+## Quickstart
+
+1. Create a virtualenv and install:
+   - `pip install -e .`
+2. Copy env file:
+   - `cp .env.example .env`
+3. Run migrations:
+   - `alembic upgrade head`
+4. Run tests with coverage (recommended before starting app):
+   - `pytest --cov=app --cov-report=term-missing`
+5. Start app:
+   - `python -m app.main`
+
+## Runtime Config
+
+- `LLM_TIMEOUT_SECONDS` controls maximum time per LLM API call (default `60`).
+
+## Local Ollama (Dev)
+
+To run the analyst summary LLM locally in development:
+
+1. Start Ollama server:
+   - `ollama serve`
+2. Pull a local model (example):
+   - `ollama pull llama3.2:1b`
+3. Configure `.env`:
+   - `OLLAMA_BASE_URL=http://127.0.0.1:11434/v1`
+   - `ADVISOR_LLM=ollama:llama3.2:1b`
+   - `CLIENT_LLM=ollama:llama3.2:1b`
+   - `ANALYST_WEB_LLMS=ollama:llama3.2:1b`
+   - `ANALYST_SUMMARY_LLMS=ollama:llama3.2:1b`
+
+Notes:
+- LLM specs follow `provider:model_name` format.
+- Supported providers are `anthropic`, `openai`, `gemini`, and `ollama`.
+- `llama3.2:1b` is a lightweight default for faster local dev responses.
+- Web research still requires external providers; with local-only setup the app uses KB + memory evidence and local LLM summarization.
+
+## Tests
+
+- `pytest`

@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Client — Investment advisor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --page-bg: #e8edf3;
+        --main-bg: #ffffff;
+        --main-text: #1a2233;
+        --main-muted: #5c6b82;
+        --border: #d8dee8;
+        --panel: #f4f6f9;
+        --accent: #2563eb;
+        --accent-hover: #1d4ed8;
+        --client: #15803d;
+        --advisor: #5b21b6;
+        --sidebar-blue: #1e40af;
+        --sidebar-blue-deep: #1e3a8a;
+        --radius: 12px;
+        --font: "DM Sans", system-ui, sans-serif;
+        --mono: "JetBrains Mono", ui-monospace, monospace;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--page-bg);
+        color: var(--main-text);
+        font-family: var(--font);
+        display: flex;
+        flex-direction: column;
+      }
+      header {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+        background: var(--main-bg);
+        color: var(--main-text);
+      }
+      header h1 {
+        margin: 0;
+        font-size: 1.15rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: var(--main-text);
+      }
+      header p {
+        margin: 0.2rem 0 0;
+        font-size: 0.85rem;
+        color: var(--main-muted);
+        max-width: 36rem;
+      }
+      .actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      header .actions button {
+        font-family: var(--font);
+        font-size: 0.875rem;
+        font-weight: 500;
+        border: 1px solid var(--border);
+        background: var(--main-bg);
+        color: var(--main-text);
+        padding: 0.45rem 0.85rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: border-color 0.15s, background 0.15s, color 0.15s;
+      }
+      header .actions button:hover:not(:disabled) {
+        border-color: var(--accent);
+        background: #eff6ff;
+        color: var(--sidebar-blue);
+      }
+      .composer button:disabled,
+      header .actions button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .composer .primary,
+      header .actions .primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+      .composer .primary:hover:not(:disabled),
+      header .actions .primary:hover:not(:disabled) {
+        background: var(--accent-hover);
+        border-color: var(--accent-hover);
+        color: #fff;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(220px, 280px) 1fr;
+        flex: 1;
+        min-height: 0;
+      }
+      @media (max-width: 800px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        .sidebar {
+          border-right: none;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+          max-height: 200px;
+        }
+      }
+      .sidebar {
+        border-right: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 1.1rem 1.25rem;
+        overflow: auto;
+        background: linear-gradient(180deg, var(--sidebar-blue) 0%, var(--sidebar-blue-deep) 100%);
+        color: #ffffff;
+      }
+      .sidebar h2 {
+        margin: 0 0 0.75rem;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #ffffff;
+        font-weight: 600;
+        opacity: 0.95;
+      }
+      .profile-hint {
+        margin: 0 0 0.6rem;
+        font-size: 0.72rem;
+        line-height: 1.45;
+        color: rgba(255, 255, 255, 0.82);
+      }
+      .profile-editor {
+        width: 100%;
+        margin: 0;
+        padding: 0.6rem 0.7rem;
+        min-height: 220px;
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        line-height: 1.45;
+        color: #ffffff;
+        background: rgba(0, 0, 0, 0.22);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 8px;
+        resize: vertical;
+      }
+      .profile-editor:focus {
+        outline: none;
+        border-color: rgba(255, 255, 255, 0.45);
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.08);
+      }
+      .profile-editor::placeholder {
+        color: rgba(255, 255, 255, 0.45);
+      }
+      .profile-tools {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        margin-top: 0.65rem;
+      }
+      .sidebar .profile-tools button {
+        font-family: var(--font);
+        font-size: 0.72rem;
+        font-weight: 500;
+        padding: 0.35rem 0.6rem;
+        border-radius: 6px;
+        cursor: pointer;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        background: rgba(255, 255, 255, 0.12);
+        color: #ffffff;
+      }
+      .sidebar .profile-tools button:hover {
+        background: rgba(255, 255, 255, 0.22);
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+      .profile-err {
+        margin: 0.5rem 0 0;
+        font-size: 0.68rem;
+        color: #fecaca;
+        line-height: 1.35;
+      }
+      .main {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        background: var(--main-bg);
+        color: var(--main-text);
+      }
+      #thread {
+        flex: 1;
+        overflow: auto;
+        padding: 1.25rem 1.5rem 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        max-width: 880px;
+        width: 100%;
+        margin: 0 auto;
+        background: var(--main-bg);
+      }
+      .bubble {
+        border-radius: var(--radius);
+        padding: 1rem 1.1rem;
+        max-width: 100%;
+        border: 1px solid var(--border);
+        background: var(--panel);
+        color: var(--main-text);
+        animation: fade 0.25s ease;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+      }
+      @keyframes fade {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .bubble.client {
+        align-self: flex-end;
+        border-color: #86efac;
+        background: #f0fdf4;
+        box-shadow: 0 1px 2px rgba(22, 101, 52, 0.08);
+      }
+      .bubble .label {
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--main-muted);
+      }
+      .bubble.client .label {
+        color: var(--client);
+      }
+      .bubble.advisor .label {
+        color: var(--advisor);
+      }
+      .bubble p {
+        margin: 0 0 0.6rem;
+        line-height: 1.5;
+        font-size: 0.95rem;
+        color: var(--main-text);
+      }
+      .bubble p:last-child {
+        margin-bottom: 0;
+      }
+      .recommendation {
+        margin-top: 0.75rem;
+        padding: 0.75rem 0.85rem;
+        border-radius: 8px;
+        background: #f5f3ff;
+        border: 1px solid #ddd6fe;
+        font-size: 0.88rem;
+        line-height: 1.45;
+        color: var(--main-text);
+      }
+      .recommendation strong {
+        color: #5b21b6;
+      }
+      .recommendation .primary-rec {
+        margin-top: 0.35rem;
+      }
+      .recommendation .full-rec {
+        margin-top: 0.55rem;
+        padding-top: 0.55rem;
+        border-top: 1px dashed #c4b5fd;
+      }
+      .evidence {
+        margin-top: 0.75rem;
+        font-size: 0.82rem;
+        color: var(--main-muted);
+      }
+      .evidence strong {
+        color: var(--main-text);
+      }
+      .evidence ul {
+        margin: 0.4rem 0 0;
+        padding-left: 1.1rem;
+      }
+      .evidence li {
+        margin: 0.3rem 0;
+      }
+      .analysis-toggle {
+        margin-top: 0.55rem;
+        border: 1px solid #c7d2fe;
+        color: #3730a3;
+        background: #eef2ff;
+        border-radius: 6px;
+        padding: 0.25rem 0.55rem;
+        font-size: 0.75rem;
+        cursor: pointer;
+      }
+      .analysis-toggle:hover {
+        background: #e0e7ff;
+      }
+      .analysis-content {
+        display: none;
+        margin-top: 0.55rem;
+      }
+      .analysis-content.open {
+        display: block;
+      }
+      .meta {
+        font-size: 0.75rem;
+        color: var(--main-muted);
+        margin-top: 0.65rem;
+        font-family: var(--mono);
+      }
+      .composer {
+        border-top: 1px solid var(--border);
+        padding: 1rem 1.5rem 1.25rem;
+        background: #fafbfc;
+      }
+      .composer-inner {
+        max-width: 880px;
+        margin: 0 auto;
+        display: flex;
+        gap: 0.6rem;
+        align-items: flex-end;
+      }
+      textarea {
+        flex: 1;
+        min-height: 48px;
+        max-height: 160px;
+        resize: vertical;
+        font-family: var(--font);
+        font-size: 0.95rem;
+        padding: 0.7rem 0.9rem;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: #ffffff;
+        color: var(--main-text);
+        line-height: 1.4;
+      }
+      textarea::placeholder {
+        color: #94a3b8;
+      }
+      textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+      }
+      .error {
+        color: #b91c1c;
+        font-size: 0.85rem;
+        max-width: 880px;
+        margin: 0 auto 0.5rem;
+        padding: 0 1.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>Client agent chat</h1>
+        <p>
+          You are the <strong>client</strong> in a multi-agent loop: your message is analyzed, the advisor
+          responds, and the client agent can request follow-up until the loop resolves.
+        </p>
+      </div>
+      <div class="actions">
+        <button type="button" id="btn-sample" title="Send a random client prompt">Sample prompt</button>
+        <button type="button" id="btn-new" title="Start a new conversation (clears this browser session)">
+          New session
+        </button>
+      </div>
+    </header>
+    <div class="layout">
+      <aside class="sidebar">
+        <h2>Client profile</h2>
+        <p class="profile-hint">
+          JSON sent with every message. Use <strong>Save locally</strong> to keep edits in this browser, or
+          <strong>Reset</strong> to reload the server default below.
+        </p>
+        <textarea
+          id="profile-json"
+          class="profile-editor"
+          rows="18"
+          spellcheck="false"
+          aria-label="Client profile JSON"
+          placeholder="{ }"
+        ></textarea>
+        <div class="profile-tools">
+          <button type="button" id="btn-profile-save">Save locally</button>
+          <button type="button" id="btn-profile-reset">Reset to default</button>
+        </div>
+        <p class="profile-err" id="profile-err" hidden></p>
+      </aside>
+      <div class="main">
+        <div class="error" id="err" hidden></div>
+        <div id="thread" aria-live="polite"></div>
+        <div class="composer">
+          <div class="composer-inner">
+            <textarea
+              id="input"
+              rows="2"
+              placeholder="Type as the client (e.g. goals, risk, allocation questions)…"
+              aria-label="Client message"
+            ></textarea>
+            <button type="button" class="primary" id="btn-send">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="application/json" id="default-profile-data">@@@DEFAULT_PROFILE_JSON@@@</script>
+    <script>
+      (function () {
+        const $thread = document.getElementById("thread");
+        const $input = document.getElementById("input");
+        const $err = document.getElementById("err");
+        const $profileJson = document.getElementById("profile-json");
+        const $profileErr = document.getElementById("profile-err");
+        const $btnProfileSave = document.getElementById("btn-profile-save");
+        const $btnProfileReset = document.getElementById("btn-profile-reset");
+        const $btnSend = document.getElementById("btn-send");
+        const $btnSample = document.getElementById("btn-sample");
+        const $btnNew = document.getElementById("btn-new");
+        const STORAGE_KEY = "advisor_chat_session_id";
+        const PROFILE_STORAGE_KEY = "advisor_client_profile_json";
+
+        let sessionId = localStorage.getItem(STORAGE_KEY) || null;
+
+        function getServerDefaultProfile() {
+          const el = document.getElementById("default-profile-data");
+          return JSON.parse(el.textContent);
+        }
+
+        function showProfileErr(msg) {
+          if (!msg) {
+            $profileErr.hidden = true;
+            $profileErr.textContent = "";
+            return;
+          }
+          $profileErr.hidden = false;
+          $profileErr.textContent = msg;
+        }
+
+        function loadProfileEditor() {
+          const saved = localStorage.getItem(PROFILE_STORAGE_KEY);
+          let obj = null;
+          if (saved) {
+            try {
+              obj = JSON.parse(saved);
+            } catch (e) {
+              obj = null;
+            }
+          }
+          const base = obj || getServerDefaultProfile();
+          $profileJson.value = JSON.stringify(base, null, 2);
+          showProfileErr("");
+        }
+
+        function parseProfileOrThrow() {
+          try {
+            return JSON.parse($profileJson.value);
+          } catch (e) {
+            throw new Error("Profile JSON is invalid: " + e.message);
+          }
+        }
+
+        function saveProfileLocal() {
+          try {
+            parseProfileOrThrow();
+            localStorage.setItem(PROFILE_STORAGE_KEY, $profileJson.value);
+            showProfileErr("");
+          } catch (e) {
+            showProfileErr(String(e.message || e));
+          }
+        }
+
+        function resetProfileToDefault() {
+          localStorage.removeItem(PROFILE_STORAGE_KEY);
+          $profileJson.value = JSON.stringify(getServerDefaultProfile(), null, 2);
+          showProfileErr("");
+        }
+
+        $btnProfileSave.addEventListener("click", saveProfileLocal);
+        $btnProfileReset.addEventListener("click", resetProfileToDefault);
+        $profileJson.addEventListener("blur", function () {
+          try {
+            parseProfileOrThrow();
+            showProfileErr("");
+          } catch (e) {
+            showProfileErr(String(e.message || e));
+          }
+        });
+
+        function showError(msg) {
+          if (!msg) {
+            $err.hidden = true;
+            $err.textContent = "";
+            return;
+          }
+          $err.hidden = false;
+          $err.textContent = msg;
+        }
+
+        function esc(s) {
+          return String(s)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+        }
+
+        function primaryRecommendationText(text) {
+          const cleaned = String(text || "").trim();
+          if (!cleaned) return "";
+          const firstSentence = cleaned.match(/.*?[.!?](\s|$)/);
+          if (firstSentence && firstSentence[0].trim().length >= 50) {
+            return firstSentence[0].trim();
+          }
+          if (cleaned.length <= 220) return cleaned;
+          return cleaned.slice(0, 220).trim() + "...";
+        }
+
+        function appendClientBubble(text, extra) {
+          const div = document.createElement("div");
+          div.className = "bubble client";
+          div.innerHTML =
+            '<div class="label">You (client)</div><p>' +
+            esc(text) +
+            "</p>" +
+            (extra ? '<p class="meta">' + esc(extra) + "</p>" : "");
+          $thread.appendChild(div);
+          $thread.scrollTop = $thread.scrollHeight;
+        }
+
+        function appendAdvisorBlock(result) {
+          const ad = result.advisor;
+          if (!ad) return;
+          const findings = (result.analyst && result.analyst.findings) || [];
+          const ev = findings
+            .map(
+              (f) =>
+                "<li><strong>" +
+                esc(f.source) +
+                "</strong> — " +
+                esc(f.snippet) +
+                " <span class=\"meta\">(" +
+                (f.confidence * 100).toFixed(0) +
+                "%)</span></li>"
+            )
+            .join("");
+
+          const decision = result.client_decision;
+          const loop = result.agent_loops;
+          let meta = "";
+          if (decision) {
+            meta += "Client agent: " + (decision.resolved ? "resolved" : "follow-up") + ". " + esc(decision.rationale || "");
+          }
+          if (decision && decision.follow_up_message) {
+            meta += " — Follow-up: " + esc(decision.follow_up_message);
+          }
+          if (loop) {
+            meta +=
+              (meta ? " | " : "") + "Rounds: " + loop.rounds + ", loop resolved: " + (loop.resolved ? "yes" : "no");
+          }
+          const recommendation = ad.recommendation || "";
+          const primaryRec = primaryRecommendationText(recommendation);
+          const hasFullRec = recommendation && recommendation.trim() !== primaryRec;
+          const analysisTargetId = "analysis-" + Date.now() + "-" + Math.floor(Math.random() * 100000);
+
+          const div = document.createElement("div");
+          div.className = "bubble advisor";
+          div.innerHTML =
+            '<div class="label">Advisor</div>' +
+            (recommendation
+              ? '<div class="recommendation"><strong>Primary Recommendation</strong>' +
+                '<div class="primary-rec">' +
+                esc(primaryRec) +
+                "</div>" +
+                (hasFullRec
+                  ? '<div class="full-rec">' +
+                    '<strong>Full Recommendation</strong><br/>' +
+                    esc(recommendation) +
+                    "</div>"
+                  : "") +
+                "</div>"
+              : "") +
+            '<button type="button" class="analysis-toggle" data-analysis-target="' +
+            analysisTargetId +
+            '" aria-expanded="false">Show advisor analysis</button>' +
+            '<div class="analysis-content" id="' +
+            analysisTargetId +
+            '"><p>' +
+            esc(ad.message) +
+            "</p>" +
+            (result.analyst && result.analyst.summary
+              ? '<p class="meta" style="margin-top:0.6rem">Analyst summary: ' + esc(result.analyst.summary) + "</p>"
+              : "") +
+            (ev
+              ? '<div class="evidence"><strong>Evidence</strong><ul>' + ev + "</ul></div>"
+              : '<div class="evidence">No evidence items.</div>') +
+            "</div>" +
+            (meta ? '<p class="meta">' + meta + "</p>" : "");
+          $thread.appendChild(div);
+          $thread.scrollTop = $thread.scrollHeight;
+        }
+
+        $thread.addEventListener("click", function (event) {
+          const analysisBtn = event.target.closest(".analysis-toggle");
+          if (analysisBtn) {
+            const analysisTargetId = analysisBtn.getAttribute("data-analysis-target");
+            if (!analysisTargetId) return;
+            const analysisBlock = document.getElementById(analysisTargetId);
+            if (!analysisBlock) return;
+            const isAnalysisOpen = analysisBlock.classList.toggle("open");
+            analysisBtn.textContent = isAnalysisOpen ? "Hide advisor analysis" : "Show advisor analysis";
+            analysisBtn.setAttribute("aria-expanded", isAnalysisOpen ? "true" : "false");
+            return;
+          }
+        });
+
+        async function sendMessage() {
+          const text = $input.value.trim();
+          if (!text) {
+            $input.focus();
+            return;
+          }
+          let profilePayload;
+          try {
+            profilePayload = parseProfileOrThrow();
+          } catch (e) {
+            showError(e.message || String(e));
+            showProfileErr(e.message || String(e));
+            return;
+          }
+          showError("");
+          $btnSend.disabled = true;
+          appendClientBubble(text);
+          $input.value = "";
+
+          try {
+            const r = await fetch("/api/chat", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                message: text,
+                session_id: sessionId || undefined,
+                client_profile: profilePayload,
+              }),
+            });
+            const data = await r.json().catch(() => ({}));
+            if (!r.ok) {
+              showError(data.detail || r.statusText || "Request failed");
+              return;
+            }
+            if (data.session_id) {
+              sessionId = data.session_id;
+              localStorage.setItem(STORAGE_KEY, sessionId);
+            }
+            if (data.auto_client_prompt) {
+              appendClientBubble(
+                data.auto_client_prompt,
+                "Auto-filled (empty input would do this in CLI)"
+              );
+            }
+            appendAdvisorBlock(data);
+          } catch (e) {
+            showError(String(e));
+          } finally {
+            $btnSend.disabled = false;
+            $input.focus();
+          }
+        }
+
+        async function samplePrompt() {
+          $btnSample.disabled = true;
+          showError("");
+          try {
+            let profilePayload;
+            try {
+              profilePayload = parseProfileOrThrow();
+            } catch (e) {
+              showError(e.message || String(e));
+              showProfileErr(e.message || String(e));
+              return;
+            }
+            const r = await fetch("/api/chat", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                message: "",
+                session_id: sessionId || undefined,
+                client_profile: profilePayload,
+              }),
+            });
+            const data = await r.json();
+            if (!r.ok) {
+              showError(data.detail || "Request failed");
+              return;
+            }
+            if (data.session_id) {
+              sessionId = data.session_id;
+              localStorage.setItem(STORAGE_KEY, sessionId);
+            }
+            if (data.auto_client_prompt) {
+              appendClientBubble(
+                data.auto_client_prompt,
+                "Random client prompt (same as empty line in CLI)"
+              );
+            }
+            appendAdvisorBlock(data);
+          } catch (e) {
+            showError(String(e));
+          } finally {
+            $btnSample.disabled = false;
+          }
+        }
+
+        function newSession() {
+          localStorage.removeItem(STORAGE_KEY);
+          sessionId = null;
+          $thread.innerHTML = "";
+          showError("");
+        }
+
+        $btnSend.addEventListener("click", sendMessage);
+        $input.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+          }
+        });
+        $btnSample.addEventListener("click", samplePrompt);
+        $btnNew.addEventListener("click", newSession);
+        loadProfileEditor();
+        $input.focus();
+      })();
+    </script>
+  </body>
+</html>

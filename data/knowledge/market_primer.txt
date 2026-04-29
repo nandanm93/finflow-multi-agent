@@ -1,0 +1,5 @@
+Diversification across asset classes helps reduce idiosyncratic risk.
+Investors with higher risk aversion often prefer larger allocations to high-quality bonds and cash equivalents.
+Long investment horizons generally allow more equity exposure because short-term volatility can be absorbed over time.
+Rebalancing periodically can maintain target risk levels and avoid drift.
+Sharpe ratio compares excess return to volatility and can be used to compare risk-adjusted performance.

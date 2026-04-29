@@ -27,7 +27,7 @@ async def run_chat() -> None:
 
     session_id = new_session_id()
 
-    console.print(Panel.fit("Multi-Agent Investment Advisor (type 'exit' to quit)"))
+    console.print(Panel.fit("FinFlow Multi-Agent Investment Advisor (type 'exit' to quit)"))
     console.print(f"[bold]Client profile:[/bold] {client.profile.model_dump_json(indent=2)}")
 
     while True:

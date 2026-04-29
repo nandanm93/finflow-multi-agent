@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -55,6 +55,12 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Investment advisor chat", lifespan=lifespan)
 app.mount("/static", StaticFiles(directory=str(_STATIC)), name="static")
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon() -> Response:
+    # Browsers request this by default; avoid 404 noise in logs when no asset exists.
+    return Response(status_code=204)
 
 
 @app.get("/")

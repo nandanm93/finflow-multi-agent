@@ -1,7 +1,7 @@
 [project]
 name = "multi-agent-investment-advisor"
 version = "0.1.0"
-description = "LangGraph-based multi-agent investment advisor"
+description = "LangGraph-based FinFlow multi-agent investment advisor"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

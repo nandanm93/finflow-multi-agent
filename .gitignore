@@ -10,3 +10,14 @@ __pycache__/
 *.pywz
 *.pyzw
 .DS_Store
+src/app/__pycache__/
+src/app/storage/__pycache__/
+src/app/knowledge/__pycache__/
+src/app/finance/__pycache__/
+src/app/graph/__pycache__/
+src/app/agents/__pycache__/
+src/app/models/__pycache__/
+src/app/schemas/__pycache__/
+src/app/schemas/__pycache__/
+.pytest_cache/
+*.egg-info/

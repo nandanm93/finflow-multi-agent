@@ -1,8 +1,8 @@
-# Multi-Agent Investment Advisor
+# FinFlow Multi-Agent Investment Advisor
 
 ## Introduction
 
-Multi-Agent Investment Advisor is a local-first, role-based advisory system that combines:
+FinFlow Multi-Agent Investment Advisor is a local-first, role-based advisory system that combines:
 
 - deterministic portfolio metrics,
 - retrieval-augmented context (ChromaDB + session memory),

@@ -56,7 +56,6 @@ High-level components and data stores:
 flowchart LR
   subgraph Client
     UI[Browser UI]
-    CLI[CLI main]
   end
   subgraph API
     FastAPI[FastAPI / Uvicorn]
@@ -75,7 +74,6 @@ flowchart LR
     OL[Ollama / other providers]
   end
   UI --> FastAPI
-  CLI --> LG
   FastAPI --> CA
   FastAPI --> LG
   LG --> CA

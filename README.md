@@ -208,6 +208,28 @@ Run all tests:
 
 - `python -m app.main`
 
+## Sample input / output (web UI)
+
+The following screenshots show the browser chat at [http://127.0.0.1:8000](http://127.0.0.1:8000) after starting the web app (`advisor-web` or `python -m app.api`). Each figure pairs a **sample client message** with the **advisor reply** (primary + full recommendation, client-agent status, and optional analysis).
+
+### Beginner guidance
+
+**Sample input:** `Give beginner advice` — client profile and holdings are taken from the sidebar JSON (same shape as the `client_profile` field in `/api/chat`).
+
+![Web UI: beginner advice — client message, advisor narrative, and portfolio metrics](output-screen-1.png)
+
+### Legal / finance risks
+
+**Sample input:** `show legal risk for the current investment portfolio` — triggers profile-aware legal and tax-risk framing (suitability, tax lots, goals, liquidity, disclosure).
+
+![Web UI: legal and finance risk topics plus a follow-up client question](output-screen-2.png)
+
+### Allocation question (bonds)
+
+**Sample input:** `Should I shift more into bonds given current uncertainty?` — follow-up style prompt; advisor responds with allocation-oriented guidance and summarized metrics where applicable.
+
+![Web UI: bonds / uncertainty question and advisor recommendation](output-screen-3.png)
+
 ## HTTP API (curl examples)
 
 Base URL (default): `http://127.0.0.1:8000`

@@ -1,8 +1,16 @@
+import app.knowledge.embeddings as embeddings_mod
+from app.config import get_settings
 from app.knowledge.chroma_store import ChromaKnowledgeStore
+
+
+def _reset_settings_and_embeddings_cache() -> None:
+    get_settings.cache_clear()
+    embeddings_mod.get_embedding_model.cache_clear()
 
 
 def test_chroma_query_returns_seeded_docs(monkeypatch, tmp_path):
     monkeypatch.setenv("CHROMA_DIR", str(tmp_path / "chroma"))
+    _reset_settings_and_embeddings_cache()
 
     import app.knowledge.chroma_store as chroma_store
 
@@ -25,6 +33,7 @@ def test_chroma_query_returns_seeded_docs(monkeypatch, tmp_path):
 
 def test_chroma_upsert_is_idempotent_with_deterministic_ids(monkeypatch, tmp_path):
     monkeypatch.setenv("CHROMA_DIR", str(tmp_path / "chroma"))
+    _reset_settings_and_embeddings_cache()
 
     import app.knowledge.chroma_store as chroma_store
 
@@ -47,6 +56,7 @@ def test_chroma_upsert_is_idempotent_with_deterministic_ids(monkeypatch, tmp_pat
 
 def test_session_memory_roundtrip(monkeypatch, tmp_path):
     monkeypatch.setenv("CHROMA_DIR", str(tmp_path / "chroma"))
+    _reset_settings_and_embeddings_cache()
 
     import app.knowledge.chroma_store as chroma_store
 
@@ -73,6 +83,7 @@ def test_session_memory_roundtrip(monkeypatch, tmp_path):
 
 def test_session_memory_prefers_more_recent_turns(monkeypatch, tmp_path):
     monkeypatch.setenv("CHROMA_DIR", str(tmp_path / "chroma"))
+    _reset_settings_and_embeddings_cache()
 
     import app.knowledge.chroma_store as chroma_store
 

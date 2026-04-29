@@ -20,6 +20,14 @@ async def test_analyst_dedupes_findings_and_builds_summary(monkeypatch):
         return []
 
     monkeypatch.setattr(analyst, "_web_research", _fake_web_research)
+    real_has = analyst._has_available_provider
+
+    def _no_summary_llm(purpose: str) -> bool:
+        if purpose == "summary":
+            return False
+        return real_has(purpose)
+
+    monkeypatch.setattr(analyst, "_has_available_provider", _no_summary_llm)
     task = AnalystTask(task_id="t1", question="How do I reduce portfolio risk?")
     report = await analyst.run(task)
 
